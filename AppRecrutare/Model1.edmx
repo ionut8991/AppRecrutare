@@ -1,0 +1,148 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="RecrutareModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="anunturi">
+          <Key>
+            <PropertyRef Name="a_id" />
+          </Key>
+          <Property Name="a_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="a_jid" Type="int" />
+          <Property Name="a_firma" Type="varchar" MaxLength="255" />
+          <Property Name="a_post" Type="varchar" MaxLength="255" />
+          <Property Name="a_locatie" Type="text" />
+          <Property Name="a_salariu" Type="varchar" MaxLength="50" />
+          <Property Name="a_platf" Type="varchar" MaxLength="255" />
+          <Property Name="a_date" Type="datetime" />
+          <Property Name="a_link" Type="varchar" MaxLength="255" />
+        </EntityType>
+        <EntityType Name="jobs">
+          <Key>
+            <PropertyRef Name="j_id" />
+          </Key>
+          <Property Name="j_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="j_name" Type="varchar" MaxLength="255" />
+        </EntityType>
+        <Association Name="FK__anunturi__a_jid__440B1D61">
+          <End Role="jobs" Type="Self.jobs" Multiplicity="0..1" />
+          <End Role="anunturi" Type="Self.anunturi" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="jobs">
+              <PropertyRef Name="j_id" />
+            </Principal>
+            <Dependent Role="anunturi">
+              <PropertyRef Name="a_jid" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="RecrutareModelStoreContainer">
+          <EntitySet Name="anunturi" EntityType="Self.anunturi" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="jobs" EntityType="Self.jobs" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK__anunturi__a_jid__440B1D61" Association="Self.FK__anunturi__a_jid__440B1D61">
+            <End Role="jobs" EntitySet="jobs" />
+            <End Role="anunturi" EntitySet="anunturi" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="RecrutareModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="anunturi">
+          <Key>
+            <PropertyRef Name="a_id" />
+          </Key>
+          <Property Name="a_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="a_jid" Type="Int32" />
+          <Property Name="a_firma" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="a_post" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="a_locatie" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="a_salariu" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="a_platf" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="a_date" Type="DateTime" Precision="3" />
+          <Property Name="a_link" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="job" Relationship="Self.FK__anunturi__a_jid__440B1D61" FromRole="anunturi" ToRole="jobs" />
+        </EntityType>
+        <EntityType Name="job">
+          <Key>
+            <PropertyRef Name="j_id" />
+          </Key>
+          <Property Name="j_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="j_name" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="anunturis" Relationship="Self.FK__anunturi__a_jid__440B1D61" FromRole="jobs" ToRole="anunturi" />
+        </EntityType>
+        <Association Name="FK__anunturi__a_jid__440B1D61">
+          <End Role="jobs" Type="Self.job" Multiplicity="0..1" />
+          <End Role="anunturi" Type="Self.anunturi" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="jobs">
+              <PropertyRef Name="j_id" />
+            </Principal>
+            <Dependent Role="anunturi">
+              <PropertyRef Name="a_jid" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="RecrutareEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="anunturis" EntityType="Self.anunturi" />
+          <EntitySet Name="jobs" EntityType="Self.job" />
+          <AssociationSet Name="FK__anunturi__a_jid__440B1D61" Association="Self.FK__anunturi__a_jid__440B1D61">
+            <End Role="jobs" EntitySet="jobs" />
+            <End Role="anunturi" EntitySet="anunturis" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="RecrutareModelStoreContainer" CdmEntityContainer="RecrutareEntities">
+          <EntitySetMapping Name="anunturis">
+            <EntityTypeMapping TypeName="RecrutareModel.anunturi">
+              <MappingFragment StoreEntitySet="anunturi">
+                <ScalarProperty Name="a_id" ColumnName="a_id" />
+                <ScalarProperty Name="a_jid" ColumnName="a_jid" />
+                <ScalarProperty Name="a_firma" ColumnName="a_firma" />
+                <ScalarProperty Name="a_post" ColumnName="a_post" />
+                <ScalarProperty Name="a_locatie" ColumnName="a_locatie" />
+                <ScalarProperty Name="a_salariu" ColumnName="a_salariu" />
+                <ScalarProperty Name="a_platf" ColumnName="a_platf" />
+                <ScalarProperty Name="a_date" ColumnName="a_date" />
+                <ScalarProperty Name="a_link" ColumnName="a_link" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="jobs">
+            <EntityTypeMapping TypeName="RecrutareModel.job">
+              <MappingFragment StoreEntitySet="jobs">
+                <ScalarProperty Name="j_id" ColumnName="j_id" />
+                <ScalarProperty Name="j_name" ColumnName="j_name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
