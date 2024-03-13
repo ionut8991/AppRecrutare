@@ -1,4 +1,4 @@
-﻿using iText.Kernel.Pdf;
+using iText.Kernel.Pdf;
 using iText.Layout;
 using iText.Layout.Element;
 using OpenQA.Selenium;
@@ -12,7 +12,8 @@ using System.Linq;
 using System.Threading;
 using System.Xml.Linq;
 
-namespace AppRecrutare
+
+namespace AppRecrutare1
 {
     internal class Program
     {
@@ -29,29 +30,29 @@ namespace AppRecrutare
             //verificam daca exista in baza de date
             if (!db.jobs.Any(c => c.j_name == numeJob.j_name))
             {
-                
                 db.jobs.Add(numeJob);
                 db.SaveChanges();
-                Console.WriteLine("Job adaugat cu succes!");
+                Console.WriteLine("Jobul a fost adaugat cu succes!");
             }
             else
             {
                 Console.WriteLine("Exista deja jobul!");
             }
 
-
-
             //optiuni pentru driver si deschidere pagina
             ChromeOptions options = new ChromeOptions();
-            options.AddArguments("start-maximized");
-            options.AddUserProfilePreference("intl.accept_languages", "ro");
-            options.AddUserProfilePreference("charset", "UTF-8");
+            options.AddArguments("start-maximized"); //pornire maximizata
+            options.AddUserProfilePreference("intl.accept_languages", "ro"); // limba romana
+            options.AddUserProfilePreference("charset", "UTF-8"); //charset utf-8
             ChromeDriver driver = new ChromeDriver(options);
 
 
             //functia care salveaza joburile in baza de date 
-            //BestJobsSript(driver, db, citirejob);
+
             EJobsSript(driver, db, citirejob);
+            BestJobsScript(driver, db, citirejob);
+
+
             //inchidere driver 
             driver.Quit();
             //functia de export pdf
@@ -101,7 +102,7 @@ namespace AppRecrutare
         }
 
         //functia de salvare a joburilor in baza de date
-        static void BestJobsSript(ChromeDriver driver, RecrutareEntities db, string citirejob)
+        static void BestJobsScript(ChromeDriver driver, RecrutareEntities db, string citirejob)
         {
             driver.Navigate().GoToUrl(@"https://www.bestjobs.eu/ro/locuri-de-munca/" + citirejob);
             Thread.Sleep(5000);
@@ -211,7 +212,6 @@ namespace AppRecrutare
 
         }
 
-
         static void EJobsSript(ChromeDriver driver, RecrutareEntities db, string citirejob)
         {
             driver.Navigate().GoToUrl(@"https://www.ejobs.ro/locuri-de-munca/salarii/" + citirejob);
@@ -247,7 +247,7 @@ namespace AppRecrutare
 
             ScrollDown(driver);
 
-            IList<IWebElement> Joburi = driver.FindElements(By.CssSelector("JCContent"));
+            IList<IWebElement> Joburi = driver.FindElements(By.CssSelector(".JCContent"));
             foreach (IWebElement elem in Joburi)
             {
                 //cod pentru extragerea datelor referitoare la firma, post, locatie, salariu si link
@@ -259,14 +259,14 @@ namespace AppRecrutare
                 IWebElement PostDiv = ElementPost.FindElement(By.TagName("span"));
                 string post = PostDiv.Text;
 
-                IWebElement ElementLocatie = elem.FindElement(By.CssSelector(".JCContentMiddle"));
-                IWebElement LocatieDiv = ElementLocatie.FindElement(By.XPath("//span[@class='JCContentMiddle__Info']"));               
-                string locatie = LocatieDiv.Text;
+                IWebElement ElementLocatie = elem.FindElement(By.CssSelector("span.JCContentMiddle__Info"));
+              //  IWebElement LocatieDiv = ElementLocatie.FindElement(By.XPath("//span[@class='JCContentMiddle__Info']"));
+                string locatie = ElementLocatie.Text;
 
-                IWebElement ElementSalariu = elem.FindElement(By.CssSelector(".JCContentMiddle__Info"));
+                IWebElement ElementSalariu = elem.FindElement(By.CssSelector("div.JCContentMiddle__Info"));
                 //IWebElement SalariuDiv = ElementSalariu.FindElement(By.XPath("//div[@class='JCContentMiddle__Info' and @data-v-d787945c='']"));
                 string salariu = ElementSalariu.Text;
-                
+
                 string platforma = "EJobs";
 
                 string link = elem.FindElement(By.CssSelector(".JCContentMiddle")).FindElement(By.TagName("a")).GetAttribute("href");
@@ -313,12 +313,11 @@ namespace AppRecrutare
 
         }
 
-
         //functie pentru generare pdf
         static void ExportPDF()
         {
             RecrutareEntities db = new RecrutareEntities();
-            string caleFisier = "D:\\joburi.pdf"; //calea de salvare a fisierului pdf -- TREBUIE MODIFICATA IN FUNCTIE DE UNDE VRETI SA SALVATI FISIERUL
+            string caleFisier = "C:\\Users\\Stefi\\Desktop\\ProiectSO\\joburi.pdf"; //calea de salvare a fisierului pdf -- TREBUIE MODIFICATA IN FUNCTIE DE UNDE VRETI SA SALVATI FISIERUL
             List<anunturi> lista = db.anunturis.ToList();
             using (var fileStream = new FileStream(caleFisier, FileMode.Create))
             {
@@ -327,10 +326,10 @@ namespace AppRecrutare
                     using (var pdf = new PdfDocument(writer))
                     {
                         var document = new Document(pdf);
-                        document.Add(new Paragraph("PLOIESTI: "));
+                        document.Add(new Paragraph("JOBS: "));
                         foreach (anunturi isb in lista)
                         {
-                            document.Add(new Paragraph(isb.a_id + ". Job ID: " +isb.a_jid + " Firma: " + isb.a_firma + " Post: " + isb.a_post + " Locatia: " + isb.a_locatie + " Salariu: " + isb.a_salariu + " Platforma: " + isb.a_platf + " Data: " + isb.a_date + "\nLink: " + isb.a_link));
+                            document.Add(new Paragraph(isb.a_id + ". Job ID: " + isb.a_jid + " Firma: " + isb.a_firma + " Post: " + isb.a_post + " Locatia: " + isb.a_locatie + " Salariu: " + isb.a_salariu + " Platforma: " + isb.a_platf + " Data: " + isb.a_date + "\nLink: " + isb.a_link));
                         }
                     }
                 }
@@ -339,5 +338,4 @@ namespace AppRecrutare
 
         }
     }
-
 }
